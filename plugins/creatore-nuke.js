@@ -64,6 +64,6 @@ handler.tags = ['owner']
 handler.command = /^(annientare)$/i
 handler.group = true
 handler.botAdmin = true
-handler.rowner = true
+handler.owner = true
 
 export default handler
