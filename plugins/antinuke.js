@@ -52,14 +52,6 @@ function isWhitelisted(conn, executor) {
     const botJid = conn.decodeJid(conn.user?.jid || conn.user?.id)
     if (executor === botJid) return true
 
-    const samJids = (global.sam || []).map(s => String(s).replace(/[^0-9]/g, '') + '@s.whatsapp.net')
-    if (samJids.includes(executor)) return true
-
-    const ownerJids = (global.owner || [])
-        .flatMap(v => Array.isArray(v) ? v.filter(x => typeof x === 'string') : [v])
-        .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net')
-    if (ownerJids.includes(executor)) return true
-
     if (WHITELIST.includes(executor)) return true
 
     return false
