@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const databasePath = path.join(__dirname, '../media/database/lastfm_users.json');
 const getDB = () => fs.existsSync(databasePath) ? JSON.parse(fs.readFileSync(databasePath, 'utf-8')) : {};
 const saveDB = (data) => fs.writeFileSync(databasePath, JSON.stringify(data, null, 2));
-const LASTFM_API_KEY = global.APIKeys?.lastfm;
+const LASTFM_API_KEY = '36f859a1fc4121e7f0e931806507d5f9'
 const BROWSERLESS_KEY = global.APIKeys?.browserless;
 const DEFAULT_COVER = './media/menu/menu.jpg';
 
