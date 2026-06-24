@@ -57,7 +57,7 @@ global.APIKeys = {
     openrouter: 'varebot',
     sightengine_user: 'varebot',
     sightengine_secret: 'varebot',
-    lastfm: 'varebot',
+    lastfm: '36f859a1fc4121e7f0e931806507d5f9',
 }
 
 /*⭑⭒━━━✦❘༻🪷 SISTEMA XP/EURO 💸༺❘✦━━━⭒⭑*/
