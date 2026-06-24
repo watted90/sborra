@@ -1,4 +1,4 @@
-import { WAMessageStubType } from '@realvare/based';
+import { WAMessageStubType } from '@realvare/baileys';
 import axios from 'axios';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
