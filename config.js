@@ -49,7 +49,7 @@ global.APIKeys = {
     browserless: '2UlTIpstnxR2qSn7bd818954fb9d2757b4e8f61dcbcf1f8b9',
     tmdb: 'e872848e8bd42b04aa278a868c211244',
     ocrspace: 'K85262294888957',
-    assemblyai: 'varebot',
+    assemblyai: '056dbd0254c8466da648534fe7dc6a7b',
     google: 'varebot',
     googleCX: 'varebot',
     genius: 'varebot',
