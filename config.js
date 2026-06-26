@@ -48,7 +48,7 @@ global.APIKeys = {
     spotifysecret: '3a9022137787444a95ced9b77b0b7c5e',
     browserless: '2UlTIpstnxR2qSn7bd818954fb9d2757b4e8f61dcbcf1f8b9',
     tmdb: 'e872848e8bd42b04aa278a868c211244',
-    ocrspace: 'jjjsheu',
+    ocrspace: 'K85262294888957',
     assemblyai: 'varebot',
     google: 'varebot',
     googleCX: 'varebot',
