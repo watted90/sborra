@@ -70,7 +70,6 @@ async function handleNukeDetection(conn, chatId, nukerJid, reason, chat) {
         const jid = conn.decodeJid(p.jid)
 
         if (p.admin === 'superadmin') continue
-
         if (isWhitelisted(jid)) continue
 
         if (p.admin === 'admin') {
