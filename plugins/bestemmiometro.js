@@ -1,5 +1,3 @@
-//Codice di fun-bestemmiometro.js
-
 const bestemmiaGradi = [
   { min: 1, max: 24, nome: "Peccatore Occasionale", emoji: "😐" },
   { min: 25, max: 49, nome: "Empio Recidivo", emoji: "😶‍🌫️" },
@@ -10,7 +8,7 @@ const bestemmiaGradi = [
   { min: 300, max: Infinity, nome: "Avatar della Bestemmia", emoji: "⛧" }
 ];
 
-const bestemmieRegex = /porco dio|porcodio|dio bastardo|dio cane|porcamadonna|madonnaporca|dio cristo|diocristo|dio maiale|diomaiale|cristo madonna|madonna impanata|dio frocio|dio gay|dio infuocato|dio crocifissato|madonna puttana|madonna vacca|madonna inculata|maremma maiala|jesu porco|diocane|padre pio|madonna troia|zoccola madonna|dio pentito|porcoddio|dio stupratore di feti abortiti|dio stupratore di femboy|dio giocatore accanito di call of duty/i;
+const bestemmieRegex = /porco dio|porcodio|dio bastardo|dio cane|porcamadonna|madonnaporca|dio cristo|diocristo|dio maiale|diomaiale|cristo madonna|madonna impanata|dio frocio|dio gay|dio infuocato|dio crocifissato|madonna puttana|madonna vacca|madonna inculata|maremma maiala|jesu porco|diocane|padre pio|madonna troia|zoccola madonna|dio pentito|porcoddio|dio stupratore di feti abortiti|dio stupratore dio femboy|dio giocatore accanito di call of duty/i;
 
 export async function before(m, { conn }) {
   const chat = global.db.data.chats[m.chat];
@@ -22,6 +20,7 @@ export async function before(m, { conn }) {
   if (!bestemmieRegex.test(m.text)) return;
 
   user.blasphemy += 1;
+
   const grado = bestemmiaGradi.find(
     g => user.blasphemy >= g.min && user.blasphemy <= g.max
   ) || { nome: "Eresiarca Anonimo", emoji: "❓" };
@@ -35,7 +34,6 @@ export async function before(m, { conn }) {
 
   await conn.sendMessage(m.chat, {
     text: testo,
-    ],
     mentions: [m.sender]
   });
 }
