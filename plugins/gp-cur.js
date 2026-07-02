@@ -163,14 +163,14 @@ const handler = async (m, { conn, usedPrefix, command, text }) => {
                     name: "quick_reply",
                     buttonParamsJson: JSON.stringify({
                         display_text: "🎵 Scarica Audio",
-                        id: `${usedPrefix}playaudio ${track.name} ${track.artist['#text']}`
+                        id: `${usedPrefix}playaud ${track.name} ${track.artist['#text']}`
                     })
                 },
                 {
                     name: "quick_reply",
                     buttonParamsJson: JSON.stringify({
                         display_text: "📽️ Scarica Video",
-                        id: `${usedPrefix}playvideo ${track.name} ${track.artist['#text']}`
+                        id: `${usedPrefix}playvid ${track.name} ${track.artist['#text']}`
                     })
                 },
                 {
