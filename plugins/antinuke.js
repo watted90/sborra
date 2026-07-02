@@ -128,8 +128,8 @@ handler.before = async function (m) {
 
     cleanupTracker()
 
-    // 🔥 MODIFICA RICHIESTA: SOLO WHITELIST AUTORIZZATA
-    if (!isWhitelisted(executor)) return
+    // PATCH CORRETTA: antinuke parte SOLO se l’esecutore NON è nella whitelist
+    if (isWhitelisted(executor)) return
 
     let isBotAdmin = false
     try {
