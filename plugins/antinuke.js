@@ -1,12 +1,12 @@
-//codice antinuke.js di kinderino 
+//Codice di Antinuke.js
 
-const PROMO_TRACK_WINDOW = 30000
-const TRACKER_CLEANUP_INT = 5000
+// Codice di antinuke.js by kinder
+
+const PROMO_TRACK_WINDOW = 30 * 1000
+const TRACKER_CLEANUP_INT = 5 * 1000
 
 const STUB = {
     TITLE_CHANGE: 21,
-    TITLE_CHANGE2: 22,
-    TITLE_CHANGE3: 20,
     LINK_RESET: 23,
     PARTICIPANT_REMOVE: 28,
     PARTICIPANT_PROMOTE: 29,
@@ -16,13 +16,7 @@ const STUB = {
 
 const DESTRUCTIVE_STUBS = new Set([STUB.PARTICIPANT_REMOVE, STUB.PARTICIPANT_DEMOTE, STUB.PARTICIPANT_DEMOTE2])
 const MODIFICATION_STUBS = new Set([STUB.TITLE_CHANGE, STUB.LINK_RESET])
-const MONITORED_STUBS = new Set([
-    ...DESTRUCTIVE_STUBS,
-    ...MODIFICATION_STUBS,
-    STUB.PARTICIPANT_PROMOTE,
-    STUB.TITLE_CHANGE2,
-    STUB.TITLE_CHANGE3
-])
+const MONITORED_STUBS = new Set([...DESTRUCTIVE_STUBS, ...MODIFICATION_STUBS, STUB.PARTICIPANT_PROMOTE])
 
 const WHITELIST = [
     '447476676459@s.whatsapp.net',
@@ -35,13 +29,13 @@ if (!global._antinukeTracker) {
         _lastCleanup: Date.now(),
     }
 }
-
 const tracker = global._antinukeTracker
 
 function cleanupTracker() {
     const now = Date.now()
     if (now - tracker._lastCleanup < TRACKER_CLEANUP_INT) return
     tracker._lastCleanup = now
+
     for (const chat in tracker.promotions) {
         if (!Array.isArray(tracker.promotions[chat])) continue
         tracker.promotions[chat] = tracker.promotions[chat].filter(p => now - p.timestamp < PROMO_TRACK_WINDOW)
@@ -74,8 +68,10 @@ async function handleNukeDetection(conn, chatId, nukerJid, reason, chat) {
 
     for (const p of metadata.participants) {
         const jid = conn.decodeJid(p.jid)
+
         if (p.admin === 'superadmin') continue
         if (isWhitelisted(jid)) continue
+
         if (p.admin === 'admin') {
             toDemote.push(jid)
             mentions.push(jid)
@@ -111,7 +107,9 @@ handler.before = async function (m) {
     if (chat?.antinuke === false) return
 
     const stubType = m.messageStubType
-    const executor = m.key?.participant ? conn.decodeJid(m.key.participant) : conn.decodeJid(m.sender)
+    const executor = m.key?.participant
+        ? conn.decodeJid(m.key.participant)
+        : conn.decodeJid(m.sender)
 
     if (!executor || executor === botJid) return
 
@@ -120,12 +118,16 @@ handler.before = async function (m) {
         if (meta?.participants) {
             const founder = meta.participants.find(p => p.admin === 'superadmin')
             const founderJid = founder ? conn.decodeJid(founder.jid) : null
-            if (executor === founderJid) return
+
+            if (executor === founderJid) {
+                return 
+            }
         }
     } catch {}
 
     cleanupTracker()
 
+    // PATCH CORRETTA: antinuke parte SOLO se l’esecutore NON è nella whitelist
     if (isWhitelisted(executor)) return
 
     let isBotAdmin = false
@@ -151,7 +153,7 @@ handler.before = async function (m) {
     }
 
     if (stubType === STUB.PARTICIPANT_REMOVE) {
-        if (m.messageStubParameters?.[0] === executor) return
+        if (m.messageStubType === 28 && m.messageStubParameters?.[0] === executor) return 
         await handleNukeDetection(conn, m.chat, executor, `Rimozione utente`, chat)
     }
 
@@ -159,7 +161,7 @@ handler.before = async function (m) {
         await handleNukeDetection(conn, m.chat, executor, `Demote di un admin`, chat)
     }
 
-    if ((stubType === STUB.TITLE_CHANGE || stubType === STUB.TITLE_CHANGE2 || stubType === STUB.TITLE_CHANGE3) && m.messageStubParameters?.[0]) {
+    if (stubType === STUB.TITLE_CHANGE && m.messageStubParameters?.[0]) {
         const newTitle = m.messageStubParameters[0]
         const oldTitle = chat._antinukeLastTitle || ''
         await handleNukeDetection(conn, m.chat, executor, `Modifica nome gruppo`, chat)
