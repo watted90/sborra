@@ -27,7 +27,6 @@
     "baileys",
     "whatsapp-bot",
     "varebot",
-    "@realvare/based",
     "@realvare/baileys"
   ],
   "directories": {

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { FormData } from 'formdata-node'
-import { downloadContentFromMessage } from '@realvare/based'
+import { downloadContentFromMessage } from '@realvare/baileys'
 import Jimp from 'jimp'
 import jsQR from 'jsqr'
 

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createCanvas, loadImage, registerFont } from 'canvas';
-import { getSenderLid } from '@realvare/based';
+import { getSenderLid } from '@realvare/baileys';
 
 const marriagesFile = path.resolve('media/database/sposi.json');
 let marriages = loadMarriages();

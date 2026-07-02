@@ -1,4 +1,4 @@
-import { downloadContentFromMessage } from '@realvare/based';
+import { downloadContentFromMessage } from '@realvare/baileys';
 import ffmpeg from 'fluent-ffmpeg';
 import { createWriteStream, readFile } from 'fs';
 import { join } from 'path';

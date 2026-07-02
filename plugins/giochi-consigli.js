@@ -1,4 +1,4 @@
-const { generateWAMessageFromContent, proto } = (await import('@realvare/based')).default;
+const { generateWAMessageFromContent, proto } = (await import('@realvare/baileys')).default;
 
 const handler = async (m, { conn }) => {
   await conn.reply(
