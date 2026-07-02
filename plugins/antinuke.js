@@ -68,9 +68,9 @@ async function handleNukeDetection(conn, chatId, nukerJid, reason, chat) {
 
     for (const p of metadata.participants) {
         const jid = conn.decodeJid(p.jid)
-        
+
         if (p.admin === 'superadmin') continue
-        
+
         if (isWhitelisted(jid)) continue
 
         if (p.admin === 'admin') {
@@ -107,34 +107,29 @@ handler.before = async function (m) {
     const chat = global.db?.data?.chats?.[m.chat] || {}
     if (chat?.antinuke === false) return
 
-    const isOwner = Boolean(m.isOwner || m.fromMe || m.sender === global.owner || m.sender === botJid)
-    if (!isOwner) return
-
     const stubType = m.messageStubType
     const executor = m.key?.participant
         ? conn.decodeJid(m.key.participant)
         : conn.decodeJid(m.sender)
 
     if (!executor || executor === botJid) return
-try {
-    const meta = await conn.groupMetadata(m.chat).catch(() => null)
-    if (meta?.participants) {
-        const founder = meta.participants.find(p => p.admin === 'superadmin')
-        const founderJid = founder ? conn.decodeJid(founder.jid) : null
 
-        if (executor === founderJid) {
-            return 
+    try {
+        const meta = await conn.groupMetadata(m.chat).catch(() => null)
+        if (meta?.participants) {
+            const founder = meta.participants.find(p => p.admin === 'superadmin')
+            const founderJid = founder ? conn.decodeJid(founder.jid) : null
+
+            if (executor === founderJid) {
+                return 
+            }
         }
-    }
-} catch {}
+    } catch {}
+
     cleanupTracker()
 
-    if (isWhitelisted(executor)) {
-        if (stubType === STUB.TITLE_CHANGE && m.messageStubParameters?.[0]) {
-            chat._antinukeLastTitle = m.messageStubParameters[0]
-        }
-        return
-    }
+    // 🔥 MODIFICA RICHIESTA: SOLO WHITELIST AUTORIZZATA
+    if (!isWhitelisted(executor)) return
 
     let isBotAdmin = false
     try {
