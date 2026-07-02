@@ -48,13 +48,9 @@ function pushPromotion(chatId, promoterJid, promotedJid) {
     tracker.promotions[chatId].push({ promoterJid, promotedJid, timestamp: Date.now() })
 }
 
-function isWhitelisted(conn, executor) {
-    const botJid = conn.decodeJid(conn.user?.jid || conn.user?.id)
-    if (executor === botJid) return true
-
-    if (WHITELIST.includes(executor)) return true
-
-    return false
+function isWhitelisted(executor) {
+    if (!executor) return false
+    return WHITELIST.includes(executor)
 }
 
 function isDemoteStub(stubType) {
@@ -75,7 +71,7 @@ async function handleNukeDetection(conn, chatId, nukerJid, reason, chat) {
         
         if (p.admin === 'superadmin') continue
         
-        if (isWhitelisted(conn, jid)) continue
+        if (isWhitelisted(jid)) continue
 
         if (p.admin === 'admin') {
             toDemote.push(jid)
@@ -103,12 +99,18 @@ handler.before = async function (m) {
     if (!m.isGroup || !m.messageStubType) return
     if (!MONITORED_STUBS.has(m.messageStubType)) return
 
-    const chat = global.db?.data?.chats?.[m.chat]
-    if (!chat?.antinuke) return
-
     const conn = this
-    const stubType = m.messageStubType
     const botJid = conn.decodeJid(conn.user?.jid || conn.user?.id)
+    const bot = global.db?.data?.settings?.[botJid] || {}
+    if (bot?.antinuke === false) return
+
+    const chat = global.db?.data?.chats?.[m.chat] || {}
+    if (chat?.antinuke === false) return
+
+    const isOwner = Boolean(m.isOwner || m.fromMe || m.sender === global.owner || m.sender === botJid)
+    if (!isOwner) return
+
+    const stubType = m.messageStubType
     const executor = m.key?.participant
         ? conn.decodeJid(m.key.participant)
         : conn.decodeJid(m.sender)
@@ -127,7 +129,7 @@ try {
 } catch {}
     cleanupTracker()
 
-    if (isWhitelisted(conn, executor)) {
+    if (isWhitelisted(executor)) {
         if (stubType === STUB.TITLE_CHANGE && m.messageStubParameters?.[0]) {
             chat._antinukeLastTitle = m.messageStubParameters[0]
         }
