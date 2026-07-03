@@ -1,5 +1,4 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
 
 const emojicategoria = {
   info: '⁉️',
@@ -23,21 +22,26 @@ const defaultMenu = {
   after: ``,
 }
 
-const swag = path.join(
-  path.dirname(new URL(import.meta.url).pathname),
-  'img/menu/menu.jpg'
-)
-
 function detectDevice(msgID) {
-  if (!msgID) return 'unknown'
-  else if (/^[a-zA-Z]+-[a-fA-F0-9]+$/.test(msgID)) return 'bot'
-  else if (msgID.startsWith('false_') || msgID.startsWith('true_')) return 'web'
-  else if (msgID.startsWith('3EB0') && /^[A-Z0-9]+$/.test(msgID)) return 'web'
-  else if (msgID.includes(':')) return 'desktop'
-  else if (/^[A-F0-9]{32}$/i.test(msgID)) return 'android'
-  else if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(msgID)) return 'ios'
-  else if (/^[A-Z0-9]{20,25}$/i.test(msgID) && !msgID.startsWith('3EB0')) return 'ios'
-  else return 'unknown'
+  if (!msgID) {
+    return 'unknown'; 
+  } else if (/^[a-zA-Z]+-[a-fA-F0-9]+$/.test(msgID)) {
+    return 'bot';
+  } else if (msgID.startsWith('false_') || msgID.startsWith('true_')) {
+    return 'web';
+  } else if (msgID.startsWith('3EB0') && /^[A-Z0-9]+$/.test(msgID)) {
+    return 'web';
+  } else if (msgID.includes(':')) {
+    return 'desktop';
+  } else if (/^[A-F0-9]{32}$/i.test(msgID)) {
+    return 'android';
+  } else if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(msgID)) {
+    return 'ios';
+  } else if (/^[A-Z0-9]{20,25}$/i.test(msgID) && !msgID.startsWith('3EB0')) {
+    return 'ios';
+  } else {
+    return 'unknown';
+  }
 }
 
 function getRandomMenus() {
@@ -51,38 +55,28 @@ function getRandomMenus() {
     { title: "🔍 Menu Ricerche", description: "Ricerca online", command: "menuricerche" },
     { title: "📥 Menu Download", description: "Scarica contenuti", command: "menudownload" },
     { title: "👨‍💻 Menu Creatore", description: "Comandi owner", command: "menucreatore" }
-  ]
-  return allMenus.sort(() => 0.5 - Math.random()).slice(0, 5)
+  ];
+  const shuffled = allMenus.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 5);
 }
 
-async function safeSend(conn, chat, msg, quoted) {
-  try {
-    return await conn.sendMessage(chat, msg, { quoted })
-  } catch (e) {
-    if (String(e).includes('not supported')) {
-      return await conn.sendMessage(chat, {
-        text: msg.caption || msg.text || "⚠️ Il tuo WhatsApp non supporta i menu interattivi."
-      }, { quoted })
-    } else {
-      throw e
-    }
-  }
-}
-
-let handler = async (m, { conn, usedPrefix: _p }) => {
+let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
-    let name = await conn.getName(m.sender) || 'Utente'
-    let uptime = clockString(process.uptime() * 1000)
-    let totalreg = Object.keys(global.db.data.users).length
-
-    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => ({
-      help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
-      tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
-      prefix: 'customPrefix' in plugin,
-    }))
-
-    let menuTags = Object.keys(tags)
+    let name = await conn.getName(m.sender) || 'Utente';
+    let _uptime = process.uptime() * 1000;
+    let uptime = clockString(_uptime);
+    let totalreg = Object.keys(global.db.data.users).length;
+    
+    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => {
+      return {
+        help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
+        tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
+        prefix: 'customPrefix' in plugin,
+      };
+    });
+    
+    let menuTags = Object.keys(tags);
     let _text = [
       defaultMenu.before,
       ...menuTags.map(tag => {
@@ -92,54 +86,51 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
               return defaultMenu.body
                 .replace(/%cmd/g, menu.prefix ? help : '%p' + help)
                 .replace(/%emoji/g, emojicategoria[tag] || '❔')
-                .trim()
-            }).join('\n')
+                .trim();
+            }).join('\n');
           }),
           defaultMenu.footer
-        ].join('\n')
+        ].join('\n');
       }),
       defaultMenu.after
-    ].join('\n')
-
+    ].join('\n');
+    
     let replace = {
       '%': '%',
       p: _p,
-      uptime,
-      name,
-      totalreg,
-    }
-
-    let text = _text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
-    const msgID = m.id || m.key?.id
-    const deviceType = detectDevice(msgID)
-    const isGroup = m.chat.endsWith('@g.us')
-
-    let thumbnailBuffer
-    try {
-      thumbnailBuffer = fs.readFileSync(swag)
-    } catch {
-      thumbnailBuffer = Buffer.alloc(0)
-    }
-
+      uptime: uptime,
+      name: name,
+      totalreg: totalreg,
+    };
+    
+    let text = _text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name]);
+    const msgID = m.id || m.key?.id;
+    const deviceType = detectDevice(msgID);
+    const isGroup = m.chat.endsWith('@g.us');
+    
     if (deviceType === 'ios') {
-      const randomMenus = getRandomMenus()
+      const randomMenus = getRandomMenus();
       const buttons = randomMenus.map(menu => ({
         buttonId: _p + menu.command,
         buttonText: { displayText: menu.title },
         type: 1
-      }))
+      }));
 
-      await safeSend(conn, m.chat, {
-        image: { url: 'file://' + swag },
+      const buttonMessage = {
+        image: { url: './img/menu/menu.jpg' },
         caption: text.trim(),
         footer: "",
-        buttons,
+        buttons: buttons,
         headerType: 4
-      }, m)
+      };
 
+      await conn.sendMessage(m.chat, buttonMessage, { quoted: m });
+      
     } else {
       if (isGroup) {
-        await safeSend(conn, m.chat, {
+        const thumbnailBuffer = fs.readFileSync('./img/menu/menu.jpg');
+
+        await conn.sendMessage(m.chat, {
           interactiveButtons: [{
             name: "single_select",
             buttonParamsJson: JSON.stringify({
@@ -170,8 +161,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
           title: " ",
           footer: "",
           media: { image: thumbnailBuffer }
-        }, m)
-
+        }, { quoted: m });
       } else {
         const sections = [
           {
@@ -193,15 +183,17 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
               { title: "👨‍💻 Menu Creatore", description: "Comandi owner", rowId: _p + "menucreatore" }
             ]
           }
-        ]
+        ];
 
-        await safeSend(conn, m.chat, {
+        const thumbnailBuffer = fs.readFileSync('./img/menu/menu.jpg');
+
+        await conn.sendMessage(m.chat, {
           text: text.trim(),
           footer: "",
           title: " ",
           buttonText: "Menu Disponibili",
           sections
-        }, m)
+        }, { quoted: m });
       }
     }
 
@@ -209,15 +201,15 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     console.error(e)
     conn.reply(m.chat, `${global.errore}`, m)
   }
-}
+};
 
-handler.help = ['menu']
-handler.command = ['menu', 'menuall', 'menucompleto', 'funzioni','comandi', 'help']
-export default handler
+handler.help = ['menu'];
+handler.command = ['menu', 'menuall', 'menucompleto', 'funzioni','comandi', 'help'];
+export default handler;
 
 function clockString(ms) {
-  let h = Math.floor(ms / 3600000)
-  let m = Math.floor(ms / 60000) % 60
-  let s = Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
+  let h = Math.floor(ms / 3600000);
+  let m = Math.floor(ms / 60000) % 60;
+  let s = Math.floor(ms / 1000) % 60;
+  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':');
 }
