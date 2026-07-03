@@ -1,4 +1,5 @@
-import fs from 'fs'
+
+        import fs from 'fs'
 import path from 'path'
 
 const emojicategoria = {
@@ -23,7 +24,10 @@ const defaultMenu = {
   after: ``,
 }
 
-const swag = path.join(__dirname, 'img/menu/menu.jpg')
+const swag = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  'img/menu/menu.jpg'
+)
 
 function detectDevice(msgID) {
   if (!msgID) return 'unknown'
@@ -52,7 +56,7 @@ function getRandomMenus() {
   return allMenus.sort(() => 0.5 - Math.random()).slice(0, 5)
 }
 
-let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
+let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
     let name = await conn.getName(m.sender) || 'Utente'
