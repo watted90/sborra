@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+
 const emojicategoria = {
   info: '⁉️',
   main: '🦋'
@@ -19,27 +22,19 @@ const defaultMenu = {
   footer: '*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*\n',
   after: ``,
 }
-const swag = 'https://i.ibb.co/hJW7WwxV/varebot.jpg';
+
+const swag = path.join(__dirname, 'img/menu/menu.jpg')
+
 function detectDevice(msgID) {
-  if (!msgID) {
-    return 'unknown'; 
-  } else if (/^[a-zA-Z]+-[a-fA-F0-9]+$/.test(msgID)) {
-    return 'bot';
-  } else if (msgID.startsWith('false_') || msgID.startsWith('true_')) {
-    return 'web';
-  } else if (msgID.startsWith('3EB0') && /^[A-Z0-9]+$/.test(msgID)) {
-    return 'web';
-  } else if (msgID.includes(':')) {
-    return 'desktop';
-  } else if (/^[A-F0-9]{32}$/i.test(msgID)) {
-    return 'android';
-  } else if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(msgID)) {
-    return 'ios';
-  } else if (/^[A-Z0-9]{20,25}$/i.test(msgID) && !msgID.startsWith('3EB0')) {
-    return 'ios';
-  } else {
-    return 'unknown';
-  }
+  if (!msgID) return 'unknown'
+  else if (/^[a-zA-Z]+-[a-fA-F0-9]+$/.test(msgID)) return 'bot'
+  else if (msgID.startsWith('false_') || msgID.startsWith('true_')) return 'web'
+  else if (msgID.startsWith('3EB0') && /^[A-Z0-9]+$/.test(msgID)) return 'web'
+  else if (msgID.includes(':')) return 'desktop'
+  else if (/^[A-F0-9]{32}$/i.test(msgID)) return 'android'
+  else if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(msgID)) return 'ios'
+  else if (/^[A-Z0-9]{20,25}$/i.test(msgID) && !msgID.startsWith('3EB0')) return 'ios'
+  else return 'unknown'
 }
 
 function getRandomMenus() {
@@ -53,28 +48,24 @@ function getRandomMenus() {
     { title: "🔍 Menu Ricerche", description: "Ricerca online", command: "menuricerche" },
     { title: "📥 Menu Download", description: "Scarica contenuti", command: "menudownload" },
     { title: "👨‍💻 Menu Creatore", description: "Comandi owner", command: "menucreatore" }
-  ];
-  const shuffled = allMenus.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, 5);
+  ]
+  return allMenus.sort(() => 0.5 - Math.random()).slice(0, 5)
 }
 
 let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
-    let name = await conn.getName(m.sender) || 'Utente';
-    let _uptime = process.uptime() * 1000;
-    let uptime = clockString(_uptime);
-    let totalreg = Object.keys(global.db.data.users).length;
+    let name = await conn.getName(m.sender) || 'Utente'
+    let uptime = clockString(process.uptime() * 1000)
+    let totalreg = Object.keys(global.db.data.users).length
     
-    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => {
-      return {
-        help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
-        tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
-        prefix: 'customPrefix' in plugin,
-      };
-    });
+    let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => ({
+      help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
+      tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
+      prefix: 'customPrefix' in plugin,
+    }))
     
-    let menuTags = Object.keys(tags);
+    let menuTags = Object.keys(tags)
     let _text = [
       defaultMenu.before,
       ...menuTags.map(tag => {
@@ -84,55 +75,53 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
               return defaultMenu.body
                 .replace(/%cmd/g, menu.prefix ? help : '%p' + help)
                 .replace(/%emoji/g, emojicategoria[tag] || '❔')
-                .trim();
-            }).join('\n');
+                .trim()
+            }).join('\n')
           }),
           defaultMenu.footer
-        ].join('\n');
+        ].join('\n')
       }),
       defaultMenu.after
-    ].join('\n');
+    ].join('\n')
     
     let replace = {
       '%': '%',
       p: _p,
-      uptime: uptime,
-      name: name,
-      totalreg: totalreg,
-    };
+      uptime,
+      name,
+      totalreg,
+    }
     
-    let text = _text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name]);
-    const msgID = m.id || m.key?.id;
-    const deviceType = detectDevice(msgID);
-    const isGroup = m.chat.endsWith('@g.us');
+    let text = _text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
+    const msgID = m.id || m.key?.id
+    const deviceType = detectDevice(msgID)
+    const isGroup = m.chat.endsWith('@g.us')
+
+    let thumbnailBuffer
+    try {
+      thumbnailBuffer = fs.readFileSync(swag)
+    } catch {
+      thumbnailBuffer = Buffer.alloc(0)
+    }
     
     if (deviceType === 'ios') {
-      const randomMenus = getRandomMenus();
+      const randomMenus = getRandomMenus()
       const buttons = randomMenus.map(menu => ({
         buttonId: _p + menu.command,
         buttonText: { displayText: menu.title },
         type: 1
-      }));
+      }))
 
-      const buttonMessage = {
-        image: { url: swag },
+      await conn.sendMessage(m.chat, {
+        image: { url: 'file://' + swag },
         caption: text.trim(),
         footer: "",
-        buttons: buttons,
+        buttons,
         headerType: 4
-      };
-
-      await conn.sendMessage(m.chat, buttonMessage, { quoted: m });
+      }, { quoted: m })
       
     } else {
       if (isGroup) {
-        let thumbnailBuffer;
-        try {
-          const response = await fetch(swag);
-          thumbnailBuffer = Buffer.from(await response.arrayBuffer());
-        } catch {
-          thumbnailBuffer = Buffer.alloc(0);
-        }
 
         await conn.sendMessage(m.chat, {
           interactiveButtons: [{
@@ -165,8 +154,10 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
           title: " ",
           footer: "",
           media: { image: thumbnailBuffer }
-        }, { quoted: m });
+        }, { quoted: m })
+
       } else {
+
         const sections = [
           {
             title: "⭐ Menu Consigliati ⭐",
@@ -187,15 +178,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
               { title: "👨‍💻 Menu Creatore", description: "Comandi owner", rowId: _p + "menucreatore" }
             ]
           }
-        ];
-
-        let thumbnailBuffer;
-        try {
-          const response = await fetch(swag);
-          thumbnailBuffer = Buffer.from(await response.arrayBuffer());
-        } catch {
-          thumbnailBuffer = null;
-        }
+        ]
 
         await conn.sendMessage(m.chat, {
           text: text.trim(),
@@ -203,7 +186,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
           title: " ",
           buttonText: "Menu Disponibili",
           sections
-        }, { quoted: m });
+        }, { quoted: m })
       }
     }
 
@@ -211,15 +194,15 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
     console.error(e)
     conn.reply(m.chat, `${global.errore}`, m)
   }
-};
+}
 
-handler.help = ['menu'];
-handler.command = ['menu', 'menuall', 'menucompleto', 'funzioni','comandi', 'help'];
-export default handler;
+handler.help = ['menu']
+handler.command = ['menu', 'menuall', 'menucompleto', 'funzioni','comandi', 'help']
+export default handler
 
 function clockString(ms) {
-  let h = Math.floor(ms / 3600000);
-  let m = Math.floor(ms / 60000) % 60;
-  let s = Math.floor(ms / 1000) % 60;
-  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':');
+  let h = Math.floor(ms / 3600000)
+  let m = Math.floor(ms / 60000) % 60
+  let s = Math.floor(ms / 1000) % 60
+  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
 }
