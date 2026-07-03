@@ -1,5 +1,4 @@
-
-        import fs from 'fs'
+import fs from 'fs'
 import path from 'path'
 
 const emojicategoria = {
@@ -56,19 +55,33 @@ function getRandomMenus() {
   return allMenus.sort(() => 0.5 - Math.random()).slice(0, 5)
 }
 
+async function safeSend(conn, chat, msg, quoted) {
+  try {
+    return await conn.sendMessage(chat, msg, { quoted })
+  } catch (e) {
+    if (String(e).includes('not supported')) {
+      return await conn.sendMessage(chat, {
+        text: msg.caption || msg.text || "⚠️ Il tuo WhatsApp non supporta i menu interattivi."
+      }, { quoted })
+    } else {
+      throw e
+    }
+  }
+}
+
 let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
     await conn.sendPresenceUpdate('composing', m.chat)
     let name = await conn.getName(m.sender) || 'Utente'
     let uptime = clockString(process.uptime() * 1000)
     let totalreg = Object.keys(global.db.data.users).length
-    
+
     let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => ({
       help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
       tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
       prefix: 'customPrefix' in plugin,
     }))
-    
+
     let menuTags = Object.keys(tags)
     let _text = [
       defaultMenu.before,
@@ -87,7 +100,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       }),
       defaultMenu.after
     ].join('\n')
-    
+
     let replace = {
       '%': '%',
       p: _p,
@@ -95,7 +108,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       name,
       totalreg,
     }
-    
+
     let text = _text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
     const msgID = m.id || m.key?.id
     const deviceType = detectDevice(msgID)
@@ -107,7 +120,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     } catch {
       thumbnailBuffer = Buffer.alloc(0)
     }
-    
+
     if (deviceType === 'ios') {
       const randomMenus = getRandomMenus()
       const buttons = randomMenus.map(menu => ({
@@ -116,18 +129,17 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         type: 1
       }))
 
-      await conn.sendMessage(m.chat, {
+      await safeSend(conn, m.chat, {
         image: { url: 'file://' + swag },
         caption: text.trim(),
         footer: "",
         buttons,
         headerType: 4
-      }, { quoted: m })
-      
+      }, m)
+
     } else {
       if (isGroup) {
-
-        await conn.sendMessage(m.chat, {
+        await safeSend(conn, m.chat, {
           interactiveButtons: [{
             name: "single_select",
             buttonParamsJson: JSON.stringify({
@@ -158,10 +170,9 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
           title: " ",
           footer: "",
           media: { image: thumbnailBuffer }
-        }, { quoted: m })
+        }, m)
 
       } else {
-
         const sections = [
           {
             title: "⭐ Menu Consigliati ⭐",
@@ -184,13 +195,13 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
           }
         ]
 
-        await conn.sendMessage(m.chat, {
+        await safeSend(conn, m.chat, {
           text: text.trim(),
           footer: "",
           title: " ",
           buttonText: "Menu Disponibili",
           sections
-        }, { quoted: m })
+        }, m)
       }
     }
 
