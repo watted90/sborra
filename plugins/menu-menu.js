@@ -117,7 +117,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
       }));
 
       const buttonMessage = {
-        image: { url: './img/menu/menu.jpg' },
+        image: { url: './media/menu/menu.jpg' },
         caption: text.trim(),
         footer: "",
         buttons: buttons,
@@ -128,7 +128,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
       
     } else {
       if (isGroup) {
-        const thumbnailBuffer = fs.readFileSync('./img/menu/menu.jpg');
+        const thumbnailBuffer = fs.readFileSync('./media/menu/menu.jpg');
 
         await conn.sendMessage(m.chat, {
           interactiveButtons: [{
@@ -185,7 +185,7 @@ let handler = async (m, { conn, usedPrefix: _p, __dirname }) => {
           }
         ];
 
-        const thumbnailBuffer = fs.readFileSync('./img/menu/menu.jpg');
+        const thumbnailBuffer = fs.readFileSync('./media/menu/menu.jpg');
 
         await conn.sendMessage(m.chat, {
           text: text.trim(),
