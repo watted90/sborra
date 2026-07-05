@@ -304,7 +304,7 @@ export async function handler(chatUpdate) {
     this.pushMessage(chatUpdate.messages).catch(console.error)
     m = smsg(this, m)
     if (!m || !m.key || !m.chat || !m.sender) return
-    if (m.isBaileys) return
+    if (m.key.fromMe && m.key.id.startsWith('3EB0') && !isValidNewsletterJid(m.chat)) return
     if (m.key.participant && m.key.participant.includes(':') && m.key.participant.split(':')[1]?.includes('@')) return
     if (m.key) {
         m.key.remoteJid = this.decodeJid(m.key.remoteJid)
