@@ -208,15 +208,23 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isS
     };
 
     let cards = [adminCard];
-    if (isOwner || isSam) {
-      cards.push({
-        image: { url: 'https://i.ibb.co/kVdFLyGL/sam.jpg' },
-        title: '『 👑 』 \`Opzioni Owner\`',
-        body: '- 〘 🛠️ 〙Gestisci le funzioni proprietario selezionando attiva o disattiva.',
-        footer: '˗ˏˋ ☾ 𝚜𝚋𝚘𝚛𝚛𝚊 𝚋𝚘𝚝 ☽ ˎˊ˗',
-        buttons: [{ name: 'single_select', buttonParamsJson: JSON.stringify({ title: 'Seleziona azione', sections: ownerSections }) }]
-      });
-    }
+if (isOwner || isSam) {
+  cards.push({
+    image: { url: 'media/menu/varebotcoc.jpg' },
+    title: '『 👑 』 `Opzioni Owner`',
+    body: '- 〘 🛠️ 〙Gestisci le funzioni proprietario selezionando attiva o disattiva.',
+    footer: '˗ˏˋ ☾ 𝚜𝚋𝚘𝚛𝚛𝚊 𝚋𝚘𝚝 ☽ ˎˊ˗',
+    buttons: [
+      {
+        name: 'single_select',
+        buttonParamsJson: JSON.stringify({
+          title: 'Seleziona azione',
+          sections: ownerSections
+        })
+      }
+    ]
+  });
+}
 
     const fkontak_menu = {
       key: { participant: m.sender, remoteJid: '0@s.whatsapp.net', fromMe: false, id: 'BotAssistant' },
