@@ -1,10 +1,50 @@
 import yts from 'yt-search'
-import ytdl from 'ytdl-core'
+import ytdl from '@distube/ytdl-core'
 import fs from 'fs'
 import path from 'path'
 
 function clean(name = 'file') {
   return name.replace(/[\\/:*?<>|]/g, '').trim().slice(0, 80) || 'file'
+}
+
+// Retry automatico per bypassare 403
+async function safeYtdl(url, opts, retry = 3) {
+  try {
+    return ytdl(url, opts)
+  } catch (e) {
+    if (retry > 0 && String(e.message).includes('403')) {
+      await new Promise(r => setTimeout(r, 1200))
+      return safeYtdl(url, opts, retry - 1)
+    }
+    throw e
+  }
+}
+
+async function searchVideo(query) {
+  if (ytdl.validateURL(query)) {
+    const info = await ytdl.getInfo(query)
+    return {
+      title: info.videoDetails.title,
+      url: info.videoDetails.video_url,
+      thumbnail: info.videoDetails.thumbnails?.[0]?.url,
+      views: info.videoDetails.viewCount,
+      duration: info.videoDetails.lengthSeconds
+    }
+  }
+
+  const res = await yts(query)
+  const vid = res.videos[0]
+  if (!vid) return null
+
+  return {
+    title: vid.title,
+    url: vid.url,
+    thumbnail: {
+      await new Promise(r => setTimeout(r, 1200))
+      return safeYtdl(url, opts, retry - 1)
+    }
+    throw e
+  }
 }
 
 async function searchVideo(query) {
@@ -35,7 +75,10 @@ async function searchVideo(query) {
 async function downloadAudio(url) {
   const tmp = path.join(process.cwd(), `tmp_${Date.now()}.mp3`)
   await new Promise((resolve, reject) => {
-    ytdl(url, { filter: 'audioonly', quality: 'highestaudio' })
+    safeYtdl(url, {
+      quality: 'highestaudio',
+      highWaterMark: 1 << 25
+    })
       .pipe(fs.createWriteStream(tmp))
       .on('finish', resolve)
       .on('error', reject)
@@ -48,7 +91,10 @@ async function downloadAudio(url) {
 async function downloadVideo(url) {
   const tmp = path.join(process.cwd(), `tmp_${Date.now()}.mp4`)
   await new Promise((resolve, reject) => {
-    ytdl(url, { filter: 'videoandaudio', quality: 'highest' })
+    safeYtdl(url, {
+      quality: 'highest',
+      highWaterMark: 1 << 25
+    })
       .pipe(fs.createWriteStream(tmp))
       .on('finish', resolve)
       .on('error', reject)
