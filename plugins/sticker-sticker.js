@@ -1,5 +1,3 @@
-// Codice di sticker-sticker.js
-
 import { sticker } from '../lib/sticker.js'
 import uploadFile from '../lib/uploadFile.js'
 import uploadImage from '../lib/uploadImage.js'
@@ -19,12 +17,13 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
             let out
             try {
-                
-                stiker = await sticker(img, false, global.packname, global.author)
+
+                stiker = await sticker(img, false, global.nomepack, m.pushName)
+
             } catch (e) {
                 console.error("Errore durante la creazione dello sticker:", e)
             } finally {
-               
+
                 if (!stiker) {
                     if (/webp/g.test(mime)) {
                         out = await webp2png(img)
@@ -34,14 +33,13 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
                         out = await uploadFile(img)
                     }
 
-                   
                     if (typeof out !== 'string') out = await uploadImage(img)
 
-                    stiker = await sticker(false, out, global.packname, global.author)
+                    stiker = await sticker(false, out, global.nomepack, m.pushName)
                 }
             }
         } else if (args[0]) {
-            if (isUrl(args[0])) stiker = await sticker(false, args[0], global.packname, global.author)
+            if (isUrl(args[0])) stiker = await sticker(false, args[0], global.nomepack, m.pushName)
             else return
         }
     } catch (e) {
@@ -49,10 +47,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
         if (!stiker) stiker = e
     } finally {
         if (stiker) {
-           
             conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
         } else {
-            
             m.reply("Errore nella creazione dello sticker.")
         }
     }
