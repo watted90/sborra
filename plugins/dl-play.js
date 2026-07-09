@@ -33,7 +33,7 @@ function run(cmd) {
 async function downloadAudio(url) {
   const tmp = path.join(process.cwd(), `tmp_${Date.now()}.mp3`)
   await run(
-    `yt-dlp --js-runtimes node:/usr/bin/node --extractor-args "youtube:player_client=web_embed" -f ba -o "${tmp}" "${url}"`
+    `yt-dlp --cookies-from-browser chrome --js-runtimes node:/usr/bin/node -f ba -o "${tmp}" "${url}"`
   )
   const buffer = fs.readFileSync(tmp)
   fs.unlinkSync(tmp)
@@ -43,7 +43,7 @@ async function downloadAudio(url) {
 async function downloadVideo(url) {
   const tmp = path.join(process.cwd(), `tmp_${Date.now()}.mp4`)
   await run(
-    `yt-dlp --js-runtimes node:/usr/bin/node --extractor-args "youtube:player_client=web_embed" -f "best[ext=mp4]" -o "${tmp}" "${url}"`
+    `yt-dlp --cookies-from-browser chrome --js-runtimes node:/usr/bin/node -f "best[ext=mp4]" -o "${tmp}" "${url}"`
   )
   const buffer = fs.readFileSync(tmp)
   fs.unlinkSync(tmp)
