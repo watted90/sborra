@@ -1,64 +1,13 @@
-import yts from 'yt-search'
-import ytdl from '@distube/ytdl-core'
+import { exec } from 'child_process'
 import fs from 'fs'
 import path from 'path'
+import yts from 'yt-search'
 
 function clean(name = 'file') {
   return name.replace(/[\\/:*?<>|]/g, '').trim().slice(0, 80) || 'file'
 }
 
-// Retry automatico per bypassare 403
-async function safeYtdl(url, opts, retry = 3) {
-  try {
-    return ytdl(url, opts)
-  } catch (e) {
-    if (retry > 0 && String(e.message).includes('403')) {
-      await new Promise(r => setTimeout(r, 1200))
-      return safeYtdl(url, opts, retry - 1)
-    }
-    throw e
-  }
-}
-
 async function searchVideo(query) {
-  if (ytdl.validateURL(query)) {
-    const info = await ytdl.getInfo(query)
-    return {
-      title: info.videoDetails.title,
-      url: info.videoDetails.video_url,
-      thumbnail: info.videoDetails.thumbnails?.[0]?.url,
-      views: info.videoDetails.viewCount,
-      duration: info.videoDetails.lengthSeconds
-    }
-  }
-
-  const res = await yts(query)
-  const vid = res.videos[0]
-  if (!vid) return null
-
-  return {
-    title: vid.title,
-    url: vid.url,
-    thumbnail: {
-      await new Promise(r => setTimeout(r, 1200))
-      return safeYtdl(url, opts, retry - 1)
-    }
-    throw e
-  }
-}
-
-async function searchVideo(query) {
-  if (ytdl.validateURL(query)) {
-    const info = await ytdl.getInfo(query)
-    return {
-      title: info.videoDetails.title,
-      url: info.videoDetails.video_url,
-      thumbnail: info.videoDetails.thumbnails?.[0]?.url,
-      views: info.videoDetails.viewCount,
-      duration: info.videoDetails.lengthSeconds
-    }
-  }
-
   const res = await yts(query)
   const vid = res.videos[0]
   if (!vid) return null
@@ -72,17 +21,18 @@ async function searchVideo(query) {
   }
 }
 
+function run(cmd) {
+  return new Promise((resolve, reject) => {
+    exec(cmd, { maxBuffer: 1024 * 1024 * 50 }, (err, stdout, stderr) => {
+      if (err) return reject(stderr || err)
+      resolve(stdout)
+    })
+  })
+}
+
 async function downloadAudio(url) {
   const tmp = path.join(process.cwd(), `tmp_${Date.now()}.mp3`)
-  await new Promise((resolve, reject) => {
-    safeYtdl(url, {
-      quality: 'highestaudio',
-      highWaterMark: 1 << 25
-    })
-      .pipe(fs.createWriteStream(tmp))
-      .on('finish', resolve)
-      .on('error', reject)
-  })
+  await run(`yt-dlp -f ba -o "${tmp}" "${url}"`)
   const buffer = fs.readFileSync(tmp)
   fs.unlinkSync(tmp)
   return buffer
@@ -90,15 +40,7 @@ async function downloadAudio(url) {
 
 async function downloadVideo(url) {
   const tmp = path.join(process.cwd(), `tmp_${Date.now()}.mp4`)
-  await new Promise((resolve, reject) => {
-    safeYtdl(url, {
-      quality: 'highest',
-      highWaterMark: 1 << 25
-    })
-      .pipe(fs.createWriteStream(tmp))
-      .on('finish', resolve)
-      .on('error', reject)
-  })
+  await run(`yt-dlp -f "best[ext=mp4]" -o "${tmp}" "${url}"`)
   const buffer = fs.readFileSync(tmp)
   fs.unlinkSync(tmp)
   return buffer
@@ -195,7 +137,7 @@ async function handler(m, { conn, args, command, usedPrefix }) {
     console.error(e)
     return conn.sendMessage(
       m.chat,
-      { text: `𝐄𝐑𝐑𝐎𝐑𝐄: ${e.message}` },
+      { text: `𝐄𝐑𝐑𝐎𝐑𝐄: ${e}` },
       { quoted: m }
     )
   }
