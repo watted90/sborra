@@ -35,7 +35,10 @@ let handler = async (m, { conn }) => {
 
 *𝐂𝐈 𝐓𝐑𝐀𝐒𝐅𝐄𝐑𝐈𝐀𝐌𝐎 𝐐𝐔𝐀* ⇩
 
-https://chat.whatsapp.com/DwiVCgiaf6O5xDsdBDog8h`,
+https://chat.whatsapp.com/DwiVCgiaf6O5xDsdBDog8h
+
+(neon)
+https://chat.whatsapp.com/BwlQHBV2jSFGCOszwgxQ0V`,
       mentions: mentions.concat(m.sender)
     }, { quoted: m })
 
