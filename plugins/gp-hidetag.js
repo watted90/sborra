@@ -1,21 +1,42 @@
-//Codice di gp-hidetag.js
+import fs from 'fs'
 
-let lastTag = new Map()
+let afkFile = './afk.json'
+let afkUsers = fs.existsSync(afkFile) ? JSON.parse(fs.readFileSync(afkFile)) : []
 
-let handler = async (m, { conn, text, isAdmin, isOwner }) => {
+let saveAFK = () => fs.writeFileSync(afkFile, JSON.stringify(afkUsers))
+
+let handler = async (m, { conn, text, command }) => {
 
   if (!m.isGroup) return
 
-  let groupMetadata = await conn.groupMetadata(m.chat)
+  let groupId = m.chat
+  let groupMetadata = await conn.groupMetadata(groupId)
   let participants = groupMetadata.participants || []
 
-  let users = participants.map(u => u.id)
+  let allUsers = participants.map(u => u.id)
+  let activeUsers = allUsers.filter(u => !afkUsers.includes(u))
+  let excludedCount = allUsers.length - activeUsers.length
+
+  if (command === 'afk') {
+    if (afkUsers.includes(m.sender)) {
+      afkUsers = afkUsers.filter(u => u !== m.sender)
+      saveAFK()
+      return conn.sendMessage(groupId, { text: `🟢 AFK disattivato, Ora potrai ricevere i tag dal bot.` }, { quoted: m })
+    } else {
+      afkUsers.push(m.sender)
+      saveAFK()
+      return conn.sendMessage(groupId, { text: `💤 AFK attivato, Adesso non riceverai tag dal bot.` }, { quoted: m })
+    }
+  }
 
   let q = m.quoted ? m.quoted : m
   let mime = (q.msg || q)?.mimetype || ''
   let isMedia = /image|video|sticker|audio/.test(mime)
 
   let captionText = text ? text.trim() : ''
+  let quotedText = q.text || q.caption || ''
+
+  if (!isMedia && m.quoted) captionText = quotedText
 
   try {
 
@@ -23,50 +44,37 @@ let handler = async (m, { conn, text, isAdmin, isOwner }) => {
       let media = await q.download()
       if (!media) throw 'Errore download media'
 
+      let payload = {}
+
       if (q.mtype === 'imageMessage') {
-        await conn.sendMessage(m.chat, {
-          image: media,
-          caption: captionText,
-          mentions: users
-        }, { quoted: m })
-
+        payload = { image: media, caption: captionText || quotedText || '', mentions: activeUsers }
       } else if (q.mtype === 'videoMessage') {
-        await conn.sendMessage(m.chat, {
-          video: media,
-          caption: captionText,
-          mentions: users
-        }, { quoted: m })
-
+        payload = { video: media, caption: captionText || quotedText || '', mentions: activeUsers }
       } else if (q.mtype === 'audioMessage') {
-        await conn.sendMessage(m.chat, {
-          audio: media,
-          mimetype: 'audio/mp4',
-          mentions: users
-        }, { quoted: m })
-
+        payload = { audio: media, mimetype: 'audio/mp4', mentions: activeUsers }
       } else if (q.mtype === 'stickerMessage') {
-        await conn.sendMessage(m.chat, {
-          sticker: media,
-          mentions: users
-        }, { quoted: m })
+        payload = { sticker: media, mentions: activeUsers }
       }
 
+      await conn.sendMessage(groupId, payload, { quoted: m })
+
     } else {
-      await conn.sendMessage(m.chat, {
-        text: captionText || '‎',
-        mentions: users
+      await conn.sendMessage(groupId, {
+        text: captionText || quotedText || '‎',
+        mentions: activeUsers
       }, { quoted: m })
     }
 
+    await conn.sendMessage(groupId, {
+      text: `💤${excludedCount} utenti non hanno ricevuto il tag.`
+    })
+
   } catch (e) {
-    console.error(e)
-    await conn.sendMessage(m.chat, {
-      text: '❌ Errore nel tagging.'
-    }, { quoted: m })
+    await conn.sendMessage(groupId, { text: '❌ Errore nel tagging.' }, { quoted: m })
   }
 }
 
-handler.command = /^(hidetag|tag)$/i
+handler.command = /^(hidetag|tag|afk)$/i
 handler.group = true
 handler.admin = true
 handler.botAdmin = true
