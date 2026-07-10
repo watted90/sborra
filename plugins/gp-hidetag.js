@@ -42,12 +42,8 @@ let handler = async (m, { conn, text }) => {
         text: captionText || quotedText || '‎',
         mentions: users
       }, { quoted: m })
-    }
-
-    await conn.sendMessage(groupId, {
-      text: `📵 Tag inviato`
     })
-
+    
   } catch (e) {
     await conn.sendMessage(groupId, { text: '❌ Errore nel tagging.' }, { quoted: m })
   }
