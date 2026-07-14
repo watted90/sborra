@@ -91,7 +91,7 @@ global.fkontak = {
 
 /*⭑⭒━━━✦❘༻☾⋆⁺₊✧ Canali predefiniti ✧₊⁺⋆☽༺❘✦━━━⭒⭑*/
 
-global.IdCanale = ['120363259442839354@newsletter',/*'tuojidcanale@newsletter'*/] // Vietato togliere il jid di Varebot
+global.IdCanale = ['120363420674060561@newsletter',/*'tuojidcanale@newsletter'*/] // Vietato togliere il jid di Varebot
 global.NomeCanale = [
   '˗ˏˋ ☾ 𝚜𝚋𝚘𝚛𝚛𝚊 𝚋𝚘𝚝 ☽ ˎˊ˗',
 ]
@@ -104,7 +104,7 @@ Array.prototype.getRandom = function () {
 async function getRandomChannel() {
   if (!Array.isArray(global.IdCanale) || !Array.isArray(global.NomeCanale) || global.IdCanale.length === 0 || global.NomeCanale.length === 0) {
     return {
-      id: '120363259442839354@newsletter',
+      id: '120363420674060561@newsletter',
       name: '˗ˏˋ ☾ 𝚜𝚋𝚘𝚛𝚛𝚊 𝚋𝚘𝚝 ☽ ˎˊ˗'
     }
   }

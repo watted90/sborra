@@ -4,7 +4,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (text.length > 500) return conn.reply(m.chat, '🌠 La lunghezza massima del suggerimento è di 500 caratteri.', m)
 
     const staffChatId = '393892016995@s.whatsapp.net'; // Owner/Staff
-    const channelChatId = '120363259442839354@newsletter';
+    const channelChatId = '120363420674060561@newsletter';
 
     const teks = `
 ╭─🌠 [ NUOVO SUGGERIMENTO ] 

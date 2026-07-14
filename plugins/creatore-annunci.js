@@ -7,7 +7,7 @@ const handler = async (m, { conn, args }) => {
   if (![...owner, ...staff].includes(m.sender)) return conn.reply(m.chat, '❌ Solo lo staff o l\'owner possono usare questo comando.', m)
   const testo = args.join(' ').trim()
   if (!testo) return conn.reply(m.chat, 'Scrivi il messaggio da inviare!', m)
-  const canaleAnnunci = '120363259442839354@newsletter'
+  const canaleAnnunci = '120363420674060561@newsletter'
   const nomeAnnunciatore = m.pushName || 'Staff'
   const messaggio = `
 ╔══════════╗
