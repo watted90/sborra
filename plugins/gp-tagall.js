@@ -152,17 +152,7 @@ const handler = async (m, { conn, participants, args }) => {
   
   await conn.sendMessage(m.chat, { 
     text: messaggi,
-    mentions: omlfinally, 
-    contextInfo: { 
-      externalAdReply: {
-        title: infoGroup.subject,
-        body: `⛧°⋆༺ ${targetParticipants.length} membri ༻⋆°⛧`,
-        thumbnailUrl: infoGroup.img,
-        sourceUrl: '',
-        mediaType: 1,
-        renderLargerThumbnail: true
-      }
-    }
+    mentions: omlfinally
   });
 };
 

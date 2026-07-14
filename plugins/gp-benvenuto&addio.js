@@ -448,17 +448,7 @@ handler.before = async (m, { conn, groupMetadata, match }) => {
         const body = username || displayName || `@${cleanUserId}`;
         await conn.sendMessage(m.chat, {
             text: caption,
-            mentions: [jid],
-            contextInfo: {
-                externalAdReply: {
-                    title,
-                    body,
-                    mediaType: 1,
-                    renderLargerThumbnail: false,
-                    thumbnailUrl: profilePicUrl,
-                    sourceUrl: ''
-                }
-            }
+            mentions: [jid]
         });
     }
 

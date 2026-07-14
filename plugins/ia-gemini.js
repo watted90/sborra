@@ -92,7 +92,6 @@ const createInteractiveButtons = (text, response, usedPrefix) => {
 
 const sendInteractiveMessage = async (m, conn, text, response, usedPrefix) => {
     const buttons = createInteractiveButtons(text, response, usedPrefix);
-    const aiContext = { contextInfo: { externalAdReply: { title: 'VareBotAI', body: 'AI Response' } } };
     
     if (buttons.length > 0) {
         await conn.sendMessage(m.chat, {
@@ -100,11 +99,10 @@ const sendInteractiveMessage = async (m, conn, text, response, usedPrefix) => {
             footer: '𝐯𝐚𝐫𝐞 ✧ 𝐛𝐨𝐭',
             buttons: buttons,
             headerType: 1
-        }, { quoted: m, ...aiContext });
+        }, { quoted: m });
     } else {
         await conn.sendMessage(m.chat, { 
-            text: response, 
-            ...aiContext 
+            text: response
         }, { quoted: m });
     }
 };
@@ -176,7 +174,7 @@ async function vareBotLogic(m, conn, text, chatId, usedPrefix) {
         if (shouldUseInteractive(text, response)) {
             await sendInteractiveMessage(m, conn, text, response, usedPrefix);
         } else {
-            await conn.sendMessage(m.chat, { text: response, contextInfo: { externalAdReply: { title: 'VareBotAI', body: 'AI Response' } } }, { quoted: m });
+            await conn.sendMessage(m.chat, { text: response }, { quoted: m });
         }
     } catch (e) {
         console.error('Errore VareBot:', e);
@@ -193,7 +191,7 @@ handler.before = async (m, { conn, usedPrefix }) => {
     try {
         if (m.isBaileys || m.fromMe || !m.quoted) return false;
         if (m.quoted.sender !== conn.user.jid) return false;
-        if (!m.quoted.contextInfo?.externalAdReply?.title?.includes('VareBotAI')) return false;
+        if (!m.quoted?.sender) return false;
         if (m.text.startsWith('.') || m.text.startsWith('#') || m.text.startsWith('/')) return false;
         await vareBotLogic(m, conn, m.text, m.chat, usedPrefix);
         return true;

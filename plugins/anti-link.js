@@ -489,3 +489,23 @@ export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isSam }) {
 
     return false;
 }
+
+async function handleViolation(conn, m, reasonMessage, isBotAdmin) {
+    try {
+        await conn.sendMessage(m.chat, {
+            delete: m.key
+        }).catch(() => {});
+
+        const username = m.sender.split('@')[0];
+        await conn.sendMessage(m.chat, {
+            text: `${reasonMessage} *Ciao ciao* @${username}`,
+            mentions: [m.sender]
+        }).catch(() => {});
+
+        if (isBotAdmin) {
+            await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove').catch(() => {});
+        }
+    } catch (err) {
+        console.error('Errore nella gestione della violazione:', err);
+    }
+}
