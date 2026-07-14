@@ -63,8 +63,7 @@ export async function before(m, { conn, groupMetadata }) {
   if (global.db.data.chats[m.chat].rileva && varebot[type]) {
     const azione = am[type] || 'EVENTO GRUPPO';
     const contextInfo = {
-      ...global.fake.contextInfo || {},
-
+      ...(global.fake.contextInfo || {}),
       mentionedJid: []
     };
 
