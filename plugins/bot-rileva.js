@@ -64,15 +64,7 @@ export async function before(m, { conn, groupMetadata }) {
     const azione = am[type] || 'EVENTO GRUPPO';
     const contextInfo = {
       ...global.fake.contextInfo || {},
-      externalAdReply: {
-        ...global.fake.contextInfo?.externalAdReply || {},
-        title: nomegp,
-        body: azione,
-        thumbnail: ppBuffer,
-        mediaType: 1,
-        renderLargerThumbnail: false,
-        sourceUrl: null
-      },
+
       mentionedJid: []
     };
 

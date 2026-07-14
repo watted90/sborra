@@ -49,17 +49,7 @@ let handler = async (m, { args, conn, command, text }) => {
     await conn.sendMessage(m.chat, {
       image: { url: staticMapUrl },
       caption: `ㅤㅤ⋆｡˚『 ╭🌏 \`MAPS\` 🌏╯ 』˚｡⋆\n╭\n│ 『 🗺️ 』 \`Da:\` *${fromPlace.display_name}*\n│ 『 🏁 』 \`A:\` *${toPlace.display_name}*\n│\n│ 『 📏 』 \`Distanza:\` *${distanza} km*\n│ 『 🚗 』 \`Google Maps\`\n*${gmapsUrl}*\n│\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
-      contextInfo: { ...global.fake.contextInfo,
-        externalAdReply: { 
-          ...global.fake.contextInfo,
-          title: '🗺️ Percorso trovato 🌍',
-          body: `${fromPlace.display_name} → ${toPlace.display_name}`,
-          thumbnailUrl: staticMapUrl,
-          sourceUrl: global.gruppo,
-          mediaType: 1,
-          renderLargerThumbnail: false
-        }
-      }
+      contextInfo: { ...global.fake.contextInfo }
     }, { quoted: m });
     return;
   }
@@ -77,17 +67,7 @@ let handler = async (m, { args, conn, command, text }) => {
   await conn.sendMessage(m.chat, {
     image: { url: staticMapUrl },
     caption: `ㅤㅤ⋆｡˚『 ╭🌏 \`MAPS\` 🌏╯ 』˚｡⋆\n╭\n│ 『 📌 』 *${display_name}*\n│\n│ 『 📍 』 \`Google Maps:\`\n│ *https://maps.google.com/?q=${lat},${lon}*\n│\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
-    contextInfo: { ...global.fake.contextInfo,
-      externalAdReply: {
-        ...global.fake.contextInfo,
-        title: '🗺️ Posizione trovata 🌍',
-        body: display_name,
-        thumbnailUrl: staticMapUrl,
-        sourceUrl: global.gruppo,
-        mediaType: 1,
-        renderLargerThumbnail: false
-      }
-    }
+    contextInfo: { ...global.fake.contextInfo }
   }, { quoted: m });
 };
 

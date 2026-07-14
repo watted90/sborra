@@ -23,14 +23,7 @@ const handler = async (m, { conn, participants, groupMetadata, args, isOwner, is
     await conn.sendMessage(m.chat, {
         text: testo,
         contextInfo: {
-            mentionedJid: mentionList,
-            externalAdReply: {
-                title: groupMetadata.subject,
-                body: "『 🛎️ 』 invocando gli admin",
-                thumbnailUrl: foto,
-                mediaType: 1,
-                renderLargerThumbnail: false
-            }
+            mentionedJid: mentionList
         }
     }, { quoted: m });
 };

@@ -84,14 +84,6 @@ global.fkontak = {
         newsletterJid: canale.id,
         serverMessageId: 1,
         newsletterName: canale.name
-      },
-      externalAdReply: {
-        title: testobot,
-        body: dev,
-        thumbnail: zwag,
-        sourceUrl: '',
-        mediaType: 1,
-        renderLargerThumbnail: false
       }
     }
   }

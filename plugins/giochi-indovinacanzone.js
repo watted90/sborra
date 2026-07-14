@@ -135,16 +135,7 @@ let handler = async (m, { conn, text }) => {
 
         let gameMessage = await conn.sendMessage(m.chat, {
             text: txtMessage,
-            contextInfo: { ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: 'Indovina la canzone',
-                    body: `Artista: ${track.artist}`,
-                    thumbnailUrl: track.artwork,
-                    sourceUrl: '',
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
-            }
+            contextInfo: { ...global.fake.contextInfo }
         }, { quoted: m });
 
         await conn.sendMessage(m.chat, { 

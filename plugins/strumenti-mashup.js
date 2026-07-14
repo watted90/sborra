@@ -236,14 +236,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
                 mimetype: 'audio/mpeg',
                 fileName: `Mix_${q1}_to_${q2}.mp3`,
                 ptt: false,
-                contextInfo: {
-                    externalAdReply: {
-                        title: `Smart Mix: ${q1} ➟ ${q2}`,
-                        body: 'sborra ✧ bot dj mode',
-                        thumbnailUrl: v1.thumbnail,
-                        mediaType: 1, renderLargerThumbnail: true
-                    }
-                }
+                contextInfo: {}
             }, { quoted: m });
 
         } else {
@@ -335,14 +328,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
                     audio: fs.readFileSync(mix1),
                     mimetype: 'audio/mpeg',
                     fileName: `Mashup_${q2}_Vocals_+_${q1}_Base.mp3`,
-                    contextInfo: {
-                        externalAdReply: {
-                            title: `${q2} (Vocals) + ${q1} (Base)${isApproxV2 || isApproxI1 ? ' (Approx)' : ''}`,
-                            body: 'Sborra Bot Studio Mix',
-                            thumbnailUrl: rV2.thumbnail,
-                            mediaType: 1, renderLargerThumbnail: true
-                        }
-                    }
+                    contextInfo: {}
                 }, { quoted: m });
             }
 
@@ -351,14 +337,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
                     audio: fs.readFileSync(mix2),
                     mimetype: 'audio/mpeg',
                     fileName: `Mashup_${q1}_Vocals_+_${q2}_Base.mp3`,
-                    contextInfo: {
-                        externalAdReply: {
-                            title: `${q1} (Vocals) + ${q2} (Base)${isApproxV1 || isApproxI2 ? ' (Approx)' : ''}`,
-                            body: 'Sborra Bot Studio Mix',
-                            thumbnailUrl: rV1.thumbnail,
-                            mediaType: 1, renderLargerThumbnail: true
-                        }
-                    }
+                    contextInfo: {}
                 }, { quoted: m });
             }
 

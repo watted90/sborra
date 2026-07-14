@@ -65,15 +65,7 @@ ${statoFunzioni}
   await conn.reply(m.chat, varebot, m, {
     mentions: [owner[0][0] + '@s.whatsapp.net'],
     contextInfo: {
-      ...global.fake.contextInfo,
-      externalAdReply: {
-        title: '      ✧･ﾟ: *✧･ﾟ:* 𝚜𝚋𝚘𝚛𝚛𝚊 𝚋𝚘𝚝 *:･ﾟ✧*:･ﾟ✧',
-        body: `                         ʙʏ - ᴅɪᴇʜ ✦`,
-        thumbnailUrl: pp,
-        sourceUrl: "https://varebot.com", 
-        mediaType: 1,
-        renderLargerThumbnail: true
-      }
+      ...global.fake.contextInfo
     }
   })
 }

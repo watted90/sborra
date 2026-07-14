@@ -62,15 +62,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         await conn.sendFile(m.chat, buffer, 'wanted.jpg', caption, m, false, {
             mentions: [who],
             contextInfo: {
-                mentionedJid: [who],
-                externalAdReply: {
-                    title: '🏴‍☠️ RICERCATO: ' + username,
-                    body: `taglia di ${formattedBounty} Berry`,
-                    thumbnailUrl: pp,
-                    sourceUrl: global.gruppo,
-                    mediaType: 1,
-                    renderLargerThumbnail: false
-                }
+                mentionedJid: [who]
             }
         })
 

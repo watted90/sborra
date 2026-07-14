@@ -26,17 +26,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
     if (user.registered) {
         const timeSinceReg = moment(user.regTime).fromNow();
         return conn.sendMessage(m.chat, {
-            text: `『 ❌ 』- *${target === m.sender ? 'Sei' : 'Questo utente è'} già registrato!*\n『 📅 』 Registrazione: ${timeSinceReg}\n\n*Per resettare usa:* _${usedPrefix}unreg_`,
-            contextInfo: {
-                externalAdReply: {
-                    title: '🔄 Registrazione già esistente',
-                    body: 'Usa il comando unreg per cancellarti',
-                    thumbnailUrl: perfil,
-                    sourceUrl: null,
-                    mediaType: 1,
-                    renderLargerThumbnail: false
-                }
-            }
+            text: `『 ❌ 』- *${target === m.sender ? 'Sei' : 'Questo utente è'} già registrato!*\n『 📅 』 Registrazione: ${timeSinceReg}\n\n*Per resettare usa:* _${usedPrefix}unreg_`
         }, { quoted: m });
     }
 
@@ -93,16 +83,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
     await conn.sendMessage(m.chat, {
         text: regbot,
         contextInfo: {
-            mentionedJid: [target],
-            externalAdReply: {
-                title: '『 ✅ 』 Registrazione Completata!',
-                body: `Benvenuto/a ${name}!`,
-                thumbnailUrl: perfil,
-                mediaType: 1,
-                renderLargerThumbnail: false,
-                showAdAttribution: false,
-                sourceUrl: null
-            }
+            mentionedJid: [target]
         }
     }, { quoted: m });
 

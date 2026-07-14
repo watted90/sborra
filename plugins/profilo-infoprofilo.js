@@ -125,16 +125,7 @@ let handler = async (m, { conn, usedPrefix }) => {
             text: menuBox,
             mentions: [m.sender],
             contextInfo: {
-                ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: `📋 Gestione Profilo - ${name}`,
-                    body: `${phone} • Livello ${currentLevel} • ${formatNumber(user.euro || 0)}€`,
-                    thumbnailUrl: pp,
-                    sourceUrl: '',
-                    mediaType: 1,
-                    renderLargerThumbnail: false,
-                    showAdAttribution: false
-                }
+                ...global.fake.contextInfo
             }
         }, { quoted: m })
     } catch (e) {

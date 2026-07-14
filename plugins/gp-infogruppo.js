@@ -52,15 +52,7 @@ ${readMore}
   await conn.reply(m.chat, text, m, {
     mentions: [...groupAdmins.map((v) => v.id), owner],
     contextInfo: {
-      ...global.fake?.contextInfo,
-      externalAdReply: {
-        title: groupMetadata.subject,
-        body: `Creato il: ${new Date(groupMetadata.creation * 1000).toLocaleDateString('it-IT')}`,
-        thumbnailUrl: pp,
-        sourceUrl: null,
-        mediaType: 1,
-        renderLargerThumbnail: true
-      }
+      ...global.fake?.contextInfo
     }
   });
 };

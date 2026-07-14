@@ -235,15 +235,7 @@ let handler = async (m, { conn, command, args, participants }) => {
         text: msg,
         mentions: users,
         contextInfo: {
-            ...global.fake.contextInfo,
-            externalAdReply: {
-                ...global.fake.contextInfo,
-                title: `${userName} - ${isMute ? 'Mutato' : 'Smutato'}`,
-                body: `${targetUser.split('@')[0]} - ${isMute ? (time ? `mutato per ${time / 60000} min` : 'mutato permanentemente') : 'smutato'}`,
-                thumbnailUrl: userPp,
-                mediaType: 1,
-                renderLargerThumbnail: false
-            }
+            ...global.fake.contextInfo
         }
     })
 }
@@ -280,14 +272,7 @@ handler.before = async (m, { conn, isCommand }) => {
             text: `ㅤㅤ⋆｡˚『 ╭ \`MUTE SCADUTO\` ╯ 』˚｡⋆\n╭\n│ 『 ✅ 』 \`utente:\` *@${m.sender.split('@')[0]}*\n│ 『 🔓 』 \`stato:\` *smutato automaticamente*\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
             mentions: [m.sender],
             contextInfo: {
-                ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: userName,
-                    body: 'Mute scaduto - Utente libero',
-                    thumbnailUrl: userPp,
-                    mediaType: 1,
-                    renderLargerThumbnail: false
-                }
+                ...global.fake.contextInfo
             }
         })
         return
@@ -321,14 +306,7 @@ handler.before = async (m, { conn, isCommand }) => {
             text: `ㅤㅤ⋆｡˚『 ╭ \`AVVERTIMENTO\` ╯ 』˚｡⋆\n╭\n│ 『 ⚠️ 』 \`utente:\` *@${m.sender.split('@')[0]}*\n│ 『 🚫 』 \`problema:\` *Spam mentre mutato*\n│ 『 ⚡ 』 \`rischio:\` *Rimozione dal gruppo*\n│ 『 📊 』 \`messaggi:\` *${userWarnings.count}/7*\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
             mentions: [m.sender],
             contextInfo: {
-                ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: userName,
-                    body: `Avvertimento spam - ${userWarnings.count}/7 messaggi`,
-                    thumbnailUrl: userPp,
-                    mediaType: 1,
-                    renderLargerThumbnail: false
-                }
+                ...global.fake.contextInfo
             }
         })
         
@@ -345,14 +323,7 @@ handler.before = async (m, { conn, isCommand }) => {
                 text: `ㅤㅤ⋆｡˚『 ╭ \`UTENTE RIMOSSO\` ╯ 』˚｡⋆\n╭\n│ 『 🚫 』 \`utente:\` *@${m.sender.split('@')[0]}*\n│ 『 ⚡ 』 \`motivo:\` *Spam eccessivo mentre mutato*\n│ 『 📊 』 \`messaggi:\` *${userWarnings.count} in poco tempo*\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
                 mentions: [m.sender],
                 contextInfo: {
-                    ...global.fake.contextInfo,
-                    externalAdReply: {
-                        title: userName,
-                        body: 'Rimosso per spam eccessivo',
-                        thumbnailUrl: userPp,
-                        mediaType: 1,
-                        renderLargerThumbnail: false
-                    }
+                    ...global.fake.contextInfo
                 }
             })
             
@@ -382,14 +353,7 @@ handler.before = async (m, { conn, isCommand }) => {
                 text: `ㅤㅤ⋆｡˚『 ╭ \`SEI MUTATO\` ╯ 』˚｡⋆\n╭\n│ 『 🚫 』 \`utente:\` *@${m.sender.split('@')[0]}*\n│ 『 🔇 』 \`stato:\` *Non puoi parlare o usare comandi*\n│ 『 📝 』 \`motivo:\` *${data.reason}*\n│ 『 ⏱️ 』 \`tempo:\` *${remaining}*\n*╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
                 mentions: [m.sender],
                 contextInfo: {
-                    ...global.fake.contextInfo,
-                    externalAdReply: {
-                        title: userName,
-                        body: `Utente mutato - ${remaining}`,
-                        thumbnailUrl: userPp,
-                        mediaType: 1,
-                        renderLargerThumbnail: false
-                    }
+                    ...global.fake.contextInfo
                 }
             })
             data.lastNotification = now

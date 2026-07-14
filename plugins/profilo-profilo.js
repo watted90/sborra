@@ -211,16 +211,7 @@ ${marriages[who] ? `│  『 💕 』 \`Sposato:\`\n│      *⤷*  ${partnerMen
         await conn.sendMessage(m.chat, {
             text: profileBox,
             mentions,
-            contextInfo: { ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: `👤 ${await conn.getName(who)}`,
-                    body: `📱 ${PhoneNumber('+' + who.split('@')[0]).getNumber('international')} • Livello ${currentLevel}`,
-                    thumbnailUrl: pp,
-                    sourceUrl: '',
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
-            }
+            contextInfo: { ...global.fake.contextInfo }
         }, { quoted: m })
         if (user.profile?.birthday && isBirthday(user.profile.birthday) && shouldSendBirthdayMessage(who)) {
             setTimeout(async () => {

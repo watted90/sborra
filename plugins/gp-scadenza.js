@@ -62,16 +62,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
         return conn.sendMessage(m.chat, {
             text: message,
-            contextInfo: {
-                externalAdReply: {
-                    title: "Scadenza Gruppo",
-                    body: groupName,
-                    thumbnailUrl: await conn.profilePictureUrl(m.chat, 'image').catch(_ => 'https://i.ibb.co/JW8K23WG/PhD.jpg'),
-                    sourceUrl: 'https://instagram.com/samakavare',
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
-            }
+            contextInfo: {}
         })
 
     } catch (e) {

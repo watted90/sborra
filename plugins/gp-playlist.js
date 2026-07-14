@@ -390,16 +390,7 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
                     conn.sendMessage(m.chat, {
                         text: replyText,
                         contextInfo: {
-                            mentionedJid: [userId],
-                            externalAdReply: {
-                                title: track.name,
-                                body: artist,
-                                thumbnailUrl: image,
-                                sourceUrl: track.external_urls.spotify,
-                                mediaType: 1,
-                                showAdAttribution: false,
-                                renderLargerThumbnail: true
-                            }
+                            mentionedJid: [userId]
                         }
                     }, { quoted: m });
                 } else {

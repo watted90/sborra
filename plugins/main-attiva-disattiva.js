@@ -151,14 +151,7 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isS
   if (global.fake && global.fake.contextInfo) {
     dynamicContextInfo = global.fake.contextInfo;
   } else {
-    dynamicContextInfo = {
-      externalAdReply: {
-        title: "sborra bot",
-        body: "Sistema di gestione funzioni",
-        mediaType: 1,
-        jpegThumbnail: groupProfilePicBuffer
-      }
-    };
+    dynamicContextInfo = {};
   }
 
   let isEnable = /true|enable|attiva|(turn)?on|1/i.test(command);

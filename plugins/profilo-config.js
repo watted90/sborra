@@ -190,16 +190,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
             text: helpMessages[type] || '『 ❌ 』- \`Comando non valido\`',
             mentions: [m.sender],
             contextInfo: {
-                ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: `⚙️ Configurazione Profilo`,
-                    body: `${phone} • Livello ${currentLevel} • ${formatNumber(user.euro || 0)}€`,
-                    thumbnailUrl: pp,
-                    sourceUrl: '',
-                    mediaType: 1,
-                    renderLargerThumbnail: false,
-                    showAdAttribution: false
-                }
+                ...global.fake.contextInfo
             }
         }, { quoted: m })
         return
@@ -237,15 +228,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
                 mentions: [m.sender],
                 contextInfo: {
-                    ...global.fake.contextInfo,
-                    externalAdReply: {
-                        title: `❌ Errore - Campo non valido`,
-                        body: `${phone} • Livello ${currentLevel}`,
-                        thumbnailUrl: pp,
-                        sourceUrl: '',
-                        mediaType: 1,
-                        renderLargerThumbnail: false
-                    }
+                    ...global.fake.contextInfo
                 }
             }, { quoted: m })
             return
@@ -286,16 +269,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
             mentions: [m.sender],
             contextInfo: {
-                ...global.fake.contextInfo,
-                externalAdReply: {
-                    title: `🗑️ Campo Eliminato - ${name}`,
-                    body: `${phone} • Livello ${currentLevel} • ${displayName}`,
-                    thumbnailUrl: pp,
-                    sourceUrl: '',
-                    mediaType: 1,
-                    renderLargerThumbnail: false,
-                    showAdAttribution: false
-                }
+                ...global.fake.contextInfo
             }
         }, { quoted: m })
 
@@ -317,15 +291,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
                     mentions: [m.sender],
                     contextInfo: {
-                        ...global.fake.contextInfo,
-                        externalAdReply: {
-                            title: `❌ Errore - Testo troppo lungo`,
-                            body: `${phone} • ${text.length}/100 caratteri`,
-                            thumbnailUrl: pp,
-                            sourceUrl: '',
-                            mediaType: 1,
-                            renderLargerThumbnail: false
-                        }
+                        ...global.fake.contextInfo
                     }
                 }, { quoted: m })
                 return
@@ -348,15 +314,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
                     mentions: [m.sender],
                     contextInfo: {
-                        ...global.fake.contextInfo,
-                        externalAdReply: {
-                            title: `❌ Username Instagram non valido`,
-                            body: `${phone} • Livello ${currentLevel}`,
-                            thumbnailUrl: pp,
-                            sourceUrl: '',
-                            mediaType: 1,
-                            renderLargerThumbnail: false
-                        }
+                        ...global.fake.contextInfo
                     }
                 }, { quoted: m })
                 return
@@ -380,16 +338,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
                     mentions: [m.sender],
                     contextInfo: {
-                        ...global.fake.contextInfo,
-                        externalAdReply: {
-                            title: `❌ Formato data non valido`,
-                            body: `${phone} • Usa DD/MM/YYYY`,
-                            thumbnailUrl: pp,
-                            sourceUrl: '',
-                            mediaType: 1,
-                            renderLargerThumbnail: false,
-                            showAdAttribution: false
-                        }
+                        ...global.fake.contextInfo
                     }
                 }, { quoted: m })
                 return
@@ -471,15 +420,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 *╰⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*`,
         mentions: [m.sender],
         contextInfo: {
-            ...global.fake.contextInfo,
-            externalAdReply: {
-                title: `✅ ${label} Aggiornato - ${name}`,
-                body: `${phone} • Livello ${currentLevel} • ${formatNumber(user.euro || 0)}€`,
-                thumbnailUrl: pp,
-                sourceUrl: '',
-                mediaType: 1,
-                renderLargerThumbnail: false
-            }
+            ...global.fake.contextInfo
         }
     }, { quoted: m })
 

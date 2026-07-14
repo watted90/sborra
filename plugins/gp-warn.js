@@ -46,14 +46,7 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
             text: textList, 
             mentions: mentions,
             contextInfo: {
-                mentionedJid: mentions,
-                externalAdReply: {
-                    title: "Registro Avvertimenti",
-                    body: `Utenti sotto sorveglianza: ${warnedUsers.length}`,
-                    thumbnailUrl: await conn.profilePictureUrl(m.chat, 'image').catch(_ => 'https://i.ibb.co/BKHtdBNp/default-avatar-profile-icon-1280x1280.jpg'),
-                    mediaType: 1,
-                    renderLargerThumbnail: false
-                }
+                mentionedJid: mentions
             }
         })
     }
@@ -129,14 +122,7 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
                 mentions: [target],
                 quoted: fkontak,
                 contextInfo: {
-                    ...global.fake.contextInfo,
-                    externalAdReply: {
-                        title: 'Avvertimento Rimosso',
-                        body: `Gruppo: ${await conn.getName(m.chat)}`,
-                        thumbnailUrl: await conn.profilePictureUrl(m.chat, 'image').catch(_ => 'https://i.ibb.co/BKHtdBNp/default-avatar-profile-icon-1280x1280.jpg'),
-                        mediaType: 1,
-                        renderLargerThumbnail: false
-                    }
+                    ...global.fake.contextInfo
                 }
             })
         }
@@ -193,14 +179,7 @@ async function handleWarnMessage(conn, m, target, remainingWarns, reason, partic
         quoted: fkontak,
         contextInfo: {
             ...global.fake.contextInfo,
-            mentionedJid: [target],
-            externalAdReply: {
-                title: `Avvertimento ${remainingWarns}/3`,
-                body: `Gruppo: ${await conn.getName(m.chat)}`,
-                thumbnailUrl: await conn.profilePictureUrl(m.chat, 'image').catch(_ => 'https://i.ibb.co/BKHtdBNp/default-avatar-profile-icon-1280x1280.jpg'),
-                mediaType: 1,
-                renderLargerThumbnail: false
-            }
+            mentionedJid: [target]
         }
     })
 }
@@ -241,14 +220,7 @@ async function handleCleanRecord(conn, m, target, participants) {
         mentions: [target],
         quoted: fkontak,
         contextInfo: {
-            ...global.fake.contextInfo,
-            externalAdReply: {
-                title: 'Record Pulito',
-                body: `Gruppo: ${await conn.getName(m.chat)}`,
-                thumbnailUrl: await conn.profilePictureUrl(m.chat, 'image').catch(_ => 'https://i.ibb.co/BKHtdBNp/default-avatar-profile-icon-1280x1280.jpg'),
-                mediaType: 1,
-                renderLargerThumbnail: false
-            }
+            ...global.fake.contextInfo
         }
     })
     await freeojebossetti(conn, msg)
