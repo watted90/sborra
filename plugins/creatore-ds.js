@@ -10,7 +10,7 @@ const handler = async (message, { conn }) => {
   }
 
   try {
-    const sessionFolder = "./sessioni/";
+    const sessionFolder = "./varesession";
 
     if (!existsSync(sessionFolder)) {
       return await conn.sendMessage(message.chat, {
