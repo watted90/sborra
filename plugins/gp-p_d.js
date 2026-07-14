@@ -45,7 +45,7 @@ handler.help = ['promuovi', 'retrocedi', 'p', 'r'];
 handler.tags = ['gruppo'];
 handler.command = ['promote', 'promuovi', 'p', 'demote', 'retrocedi', 'r'];
 handler.group = true;
-handler.admin = true;
+handler.owner = true;
 handler.botAdmin = true;
 
 export default handler;
