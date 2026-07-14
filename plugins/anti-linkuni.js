@@ -119,7 +119,7 @@ handler.before = async function (m, { conn, isAdmin, isBotAdmin, isOwner, isSam 
   if (!m.message) return true
 
   const chat = global.db.data.chats[m.chat]
-  if (!chat?.antiLinkUni) return true
+  if (!chat?.antiLinkUni) return false
 
   if (isAdmin || isOwner || isSam) return true
 
