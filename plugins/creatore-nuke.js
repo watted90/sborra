@@ -37,8 +37,8 @@ let handler = async (m, { conn }) => {
 
 https://chat.whatsapp.com/DwiVCgiaf6O5xDsdBDog8h
 
-(neon)
-https://chat.whatsapp.com/BwlQHBV2jSFGCOszwgxQ0V`,
+(ducky)
+https://chat.whatsapp.com/F6J9WM5skFM5J6HxYPXYFJ`,
       mentions: mentions.concat(m.sender)
     }, { quoted: m })
 
