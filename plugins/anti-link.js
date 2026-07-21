@@ -9,14 +9,20 @@ function extractTextAndUrlsFromMessage(message) {
     const extractedContent = { text: '', urls: [] };
     if (!message) return extractedContent;
 
-    function findContentInObject(obj) {
+    function findContentInObject(obj, inQuoted = false) {
+        if (inQuoted) return;
+
         if (typeof obj === 'string') {
             extractedContent.text += ' ' + obj;
             const foundUrls = obj.match(urlRegex);
             if (foundUrls) extractedContent.urls.push(...foundUrls);
         } else if (typeof obj === 'object' && obj !== null) {
             for (const key in obj) {
-                if (Object.hasOwn(obj, key)) findContentInObject(obj[key]);
+                if (!Object.hasOwn(obj, key)) continue;
+
+                if (key === 'quotedMessage') continue;
+
+                findContentInObject(obj[key], false);
             }
         }
     }
@@ -32,9 +38,7 @@ async function getMediaBuffer(message) {
     try {
         const msg =
             message.message?.imageMessage ||
-            message.message?.videoMessage ||
-            message.message?.extendedTextMessage?.contextInfo?.quotedMessage?.imageMessage ||
-            message.message?.extendedTextMessage?.contextInfo?.quotedMessage?.videoMessage;
+            message.message?.videoMessage;
 
         if (!msg) return null;
 
@@ -78,6 +82,8 @@ export async function before(m, { conn, isAdmin, isBotAdmin }) {
     if (m.isBaileys && m.fromMe) return true;
     if (!m.isGroup) return false;
 
+    if (m.message?.extendedTextMessage?.contextInfo?.quotedMessage) return true;
+
     const { text: messageText, urls: extractedUrls } = extractTextAndUrlsFromMessage(m.message || {});
     let containsGroupLink = !!linkRegex.exec(messageText) || extractedUrls.some(url => linkRegex.exec(url));
 
@@ -96,14 +102,14 @@ export async function before(m, { conn, isAdmin, isBotAdmin }) {
 
     if (containsGroupLink || qrLinkDetected) {
         const userTag = `@${m.sender.split('@')[0]}`;
-        const tipo = qrLinkDetected ? 'ha inviato il QR' : 'ha mandato il link';
+        const tipo = qrLinkDetected ? 'ha inviato un QR di gruppo' : 'ha mandato un link di gruppo';
 
         await conn.sendMessage(m.chat, {
-            text: `${userTag} ${tipo} di un gruppo whatsapp.`,
+            text: `${userTag} ${tipo}.`,
             mentions: [m.sender]
         });
 
-        if (isBotAdmin) {
+        if (!isAdmin && isBotAdmin) {
             await conn.groupParticipantsUpdate(m.chat, [m.sender], 'remove');
         }
     }
