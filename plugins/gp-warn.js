@@ -3,7 +3,10 @@ import fetch from 'node-fetch';
 let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner }) => {
     const isWarn = /^(warn|avverti|avvertimento)$/i.test(command)
     const isUnwarn = /^(unwarn|delwarn|togliwarn|togliavvertimento)$/i.test(command)
+    const isResetWarn = /^(resetwarn|resetavvertimenti)$/i.test(command)
+    const isResetAll = /^(resetallwarn|resettaavvertimenti)$/i.test(command)
     const isList = /^(listawarn|warnlist|listavv|avvertimenti)$/i.test(command)
+
     if (isList) {
         const chatID = m.chat
         const users = global.db.data.users
@@ -50,6 +53,7 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
             }
         })
     }
+
     let targetUsers = []
     if (m.mentionedJid?.length) {
         targetUsers = m.mentionedJid
@@ -60,7 +64,7 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
         if (cleanText.length > 5) targetUsers = [cleanText + '@s.whatsapp.net']
     }
 
-    if (!targetUsers.length) {
+    if (!targetUsers.length && !isResetAll) {
         return m.reply(createUsageMessage(usedPrefix, command, isWarn));
     }
 
@@ -78,18 +82,20 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
     if (!matchedParticipant && isWarn) {
         return m.reply(`『 ❌ 』 *Utente non trovato nel gruppo.*`);
     }
+
     const target = matchedParticipant ? conn.decodeJid(matchedParticipant.id || matchedParticipant.jid) : decodedId
     if (!global.db.data.users[target]) global.db.data.users[target] = { warns: {} }
     const user = global.db.data.users[target]
     if (!user.warns) user.warns = {}
     if (typeof user.warns[m.chat] !== 'number') user.warns[m.chat] = 0
+
     if (isWarn) {
         if (target === conn.user.jid) return m.reply('『 ‼️ 』 *Non puoi warnare il bot!*')
         const targetIsOwner = global.owner.map(([n]) => n.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(target)
         if (targetIsOwner) return m.reply('🤨 *Non puoi warnare un owner.*')
 
         const reason = getReason(m, text, target)
-        
+
         user.warns[m.chat] += 1
         const remainingWarns = user.warns[m.chat]
 
@@ -100,13 +106,14 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
             await handleWarnMessage(conn, m, target, remainingWarns, reason, participants)
         }
     }
+
     else if (isUnwarn) {
         if (user.warns[m.chat] <= 0) {
             return m.reply(`『 ‼️ 』 *L'utente @${target.split('@')[0]} non ha avvertimenti in questo gruppo.*`, null, { mentions: [target] })
         }
 
         user.warns[m.chat] -= 1
-        
+
         if (user.warns[m.chat] <= 0) {
             delete user.warns[m.chat]
             await handleCleanRecord(conn, m, target, participants)
@@ -126,6 +133,49 @@ let handler = async (m, { conn, text, command, usedPrefix, participants, isOwner
                 }
             })
         }
+    }
+
+    else if (isResetWarn) {
+        if (!user.warns[m.chat] || user.warns[m.chat] <= 0) {
+            return m.reply(`『 🧼 』 *@${target.split('@')[0]} non ha warn da resettare.*`, null, { mentions: [target] })
+        }
+
+        delete user.warns[m.chat]
+
+        const username = target.split('@')[0]
+        let userName = username
+        const userData = global.db.data.users[target]
+        if (userData && userData.name) userName = userData.name
+        const participant = participants.find(p => p.id === target || p.jid === target)
+        if (participant && (participant.notify || participant.name)) userName = participant.notify || participant.name
+
+        const fkontak = createUserFkontak(target, userName)
+
+        await m.reply(`『 ♻️ 』 @${username}\n- *Tutti i warn sono stati resettati*\n- *\`Avvertimenti: 0/3\`*`, null, {
+            mentions: [target],
+            quoted: fkontak,
+            contextInfo: {
+                ...global.fake.contextInfo
+            }
+        })
+    }
+
+    else if (isResetAll) {
+        const chatID = m.chat
+        const users = global.db.data.users
+        let warnedUsers = Object.entries(users).filter(([jid, user]) =>
+            user.warns && user.warns[chatID] > 0
+        )
+
+        if (warnedUsers.length === 0) {
+            return m.reply(`『 🧼 』 *Non ci sono warn da resettare in questo gruppo.*`)
+        }
+
+        for (let [jid, user] of warnedUsers) {
+            delete user.warns[chatID]
+        }
+
+        await m.reply(`『 ♻️ 』 *Tutti i warn del gruppo sono stati completamente resettati.*\n『 👥 』 *Utenti ripuliti:* ${warnedUsers.length}`)
     }
 }
 
@@ -168,9 +218,7 @@ async function handleWarnMessage(conn, m, target, remainingWarns, reason, partic
 
     const emoji = remainingWarns === 1 ? '⚠️' : '🔔'
 
-    const message = `『 ${emoji} 』 @${username}\n- _*Hai ricevuto un avvertimento*_
-- *\`Motivo:\`* *${reason}*
-- *\`Avvertimenti: ${remainingWarns}/3\`*`
+    const message = `『 ${emoji} 』 @${username}\n- _*Hai ricevuto un avvertimento*_\n- *\`Motivo:\`* *${reason}*\n- *\`Avvertimenti: ${remainingWarns}/3\`*`
 
     const fkontak = createUserFkontak(target, userName)
 
@@ -271,11 +319,11 @@ async function downloadTikTokVideo(url) {
     } catch { return { success: false, videoUrl: null } }
 }
 
-handler.command = /^(warn|avverti|avvertimento|unwarn|delwarn|togliwarn|togliavvertimento|listawarn|warnlist|listavv|avvertimenti)$/i
+handler.command = /^(warn|avverti|avvertimento|unwarn|delwarn|togliwarn|togliavvertimento|resetwarn|resetavvertimenti|resetallwarn|resettaavvertimenti|listawarn|warnlist|listavv|avvertimenti)$/i
 handler.group = true
 handler.admin = true
 handler.botAdmin = true
 handler.tags = ['gruppo']
-handler.help = ['warn @user', 'unwarn @user', 'listawarn']
+handler.help = ['warn @user', 'unwarn @user', 'resetwarn @user', 'resetallwarn', 'listawarn']
 
 export default handler
