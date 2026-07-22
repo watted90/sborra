@@ -39,7 +39,9 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(m.chat, {
       text: `*CI TRASFERIAMO QUA* ⇩
 
-https://chat.whatsapp.com/DwiVCgiaf6O5xDsdBDog8h`,
+https://chat.whatsapp.com/DwiVCgiaf6O5xDsdBDog8h
+
+https://chat.whatsapp.com/KqJNL6r3KTGJ9ZY70tNYeN`,
       mentions: kickList
     }, { quoted: m })
 
