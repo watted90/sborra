@@ -102,10 +102,10 @@ export async function before(m, { conn, isAdmin, isBotAdmin }) {
 
     if (containsGroupLink || qrLinkDetected) {
         const userTag = `@${m.sender.split('@')[0]}`;
-        const tipo = qrLinkDetected ? 'ha inviato un QR di gruppo' : 'ha mandato un link di gruppo';
+        const tipo = qrLinkDetected ? '𝐐𝐑' : '𝐋𝐈𝐍𝐊';
 
         await conn.sendMessage(m.chat, {
-            text: `${userTag} ${tipo}.`,
+            text: `『⛔』${userTag} 𝐇𝐀 𝐌𝐀𝐍𝐃𝐀𝐓𝐎 𝐔𝐍 ${tipo} 𝐖𝐇𝐀𝐓𝐒𝐀𝐏𝐏 𝐒𝐄𝐍𝐙𝐀 𝐂𝐎𝐍𝐒𝐄𝐍𝐒𝐎.`,
             mentions: [m.sender]
         });
 
